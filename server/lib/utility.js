@@ -20,4 +20,12 @@ exports.isValidUrl = function(url) {
 /************************************************************/
 // Add additional utility functions below
 /************************************************************/
-
+exports.hashFunction = function(username, password, callback) {
+  crypto.randomBytes(4, function(err, buffer) {
+    var salt = buffer.toString('hex');
+    var hash = crypto.createHmac('sha256', salt)
+    .update(password)
+    .digest('hex');
+    callback(hash, salt, username);
+  });
+};

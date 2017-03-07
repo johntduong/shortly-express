@@ -43,6 +43,23 @@ function(req, res, next) {
   });
 });
 
+app.get('/signup', function(req, res, next) {
+  //we need to read the request body and extract username and password (to hash)
+  console.log(req);
+  res.render('signup');
+});
+
+
+//sign up post
+app.post('/signup', function(req, res, next) {
+  //we need to read the request body and extract username and password (to hash)
+  util.hashFunction(req.body.username, req.body.password, Users.addUser);
+
+  //req.body.username;
+  res.send();
+});
+
+
 app.post('/links', 
 function(req, res, next) {
   var uri = req.body.url;
