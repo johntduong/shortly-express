@@ -28,8 +28,9 @@ module.exports = function(db) {
     return db.queryAsync('CREATE TABLE IF NOT EXISTS users (\
       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\
       username VARCHAR(30) UNIQUE,\
-      hash VARCHAR(255),\
-      salt VARCHAR(10)\
+      password VARCHAR(255),\
+      salt VARCHAR(10),\
+      timestamp TIMESTAMP\
       );');
   })
   /************************************************************/

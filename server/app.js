@@ -52,20 +52,40 @@ app.get('/signup', function(req, res, next) {
 
 //sign up post
 app.post('/signup', function(req, res, next) {
-
-
   //we need to read the request body and extract username and password (to hash)
   Users.checkUser(req.body.username, (err, results) => {
     if (results.length > 0) {
-      res.redirect('/login');
+      res.redirect('/signup');
       console.log('duplicate exists!');
     } else {
       util.hashFunction(req.body.username, req.body.password, Users.addUser);
-      res.send();
+      res.redirect('/');
     }
   });
-  // app.render('login');
-  //req.body.username;
+});
+
+var verifyPassword = (result) => {
+  console.log('this is a found password', result);
+};
+
+app.post('/login', (req, res, next) => {
+  Users.checkUser(req.body.username, (err, results) => {
+    if (results.length > 0) {
+      //check if password is right
+      //callback2(hash, salt, username, callback1);
+      util.hashFunction(req.body.username, req.body.password, function(hash, salt, username) {
+        Users.getPassword(req.body.password, req.body.username, function(err, results) {
+          if (results[0].password === hash) {
+            console.log(results[0].password);
+            //redirect to the page they would go to if logged in
+            console.log('the password matched!');
+          }
+        });
+      });
+    } else {
+      //redirect to signup
+    }
+  });
 });
 
 app.post('/links', 

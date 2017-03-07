@@ -3,7 +3,7 @@ var utils = require('../lib/utility');
 
 // Write you user database model methods here
 var addUser = function(hash, salt, username, callback) {
-  var queryString = 'INSERT INTO users SET hash = ?, salt = ?, username = ?';
+  var queryString = 'INSERT INTO users SET password = ?, salt = ?, username = ?';
   console.log('addUser arguments', arguments);
   return db.queryAsync(queryString, [hash, salt, username]);
 };
@@ -17,10 +17,17 @@ var checkUser = function(username, callback) {
     } else {
       callback(null, results);
     }
-    // console.log('callback arguments', arguments);
-    // console.log('RESULTS ARRAY', results);
-    // console.log('LENGTH OF RESULTS', results.length);
-    // console.log(results.length > 0);
+  });
+};
+
+var getPassword = function(password, username, callback) {
+  var queryString = 'SELECT password FROM users WHERE username = ?';
+  return db.queryAsync(queryString, [username], function(err, results) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, results); 
+    }
   });
 };
 

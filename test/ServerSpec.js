@@ -47,7 +47,7 @@ describe('', function() {
     /**************************************************************************************/
     /* TODO: If you create a new MySQL tables, add it to the tablenames collection below. */
     /**************************************************************************************/
-    var tablenames = ['links', 'clicks'
+    var tablenames = ['links', 'clicks', 'users'
 ];
 
     db.connect(function(err) {
@@ -78,8 +78,10 @@ describe('', function() {
         username: 'Howard',
         password: 'p@ssw0rd'
       };
-      db.query('INSERT INTO users SET ?', newUser, function(err, results) {
+      db.query('INSERT INTO users SET username = \'Howard\', password = \'p@ssw0rd\';', function(err, results) {
+        console.log('this is new User', newUser);
         db.query('SELECT * FROM users WHERE username = ?', newUser.username, function(err, results) {
+          console.log('USERS', results);
           var user = results[0];
           expect(user.username).to.exist;
           expect(user.password).to.exist;
@@ -125,7 +127,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Account Creation:', function() {
+  describe('Account Creation:', function() {
 
     it('signup creates a new user record', function(done) {
       var options = {
@@ -210,7 +212,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Account Login:', function() {
+  describe('Account Login:', function() {
 
     beforeEach(function(done) {
       var options = {

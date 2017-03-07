@@ -21,7 +21,8 @@ exports.isValidUrl = function(url) {
 // Add additional utility functions below
 /************************************************************/
 var hashFunction = function(username, password, callback) {
-  crypto.randomBytes(4, function(err, buffer) {
+  console.log('HASHFUNCTION ARGUMENTS', arguments);
+  crypto.randomBytes(4, function(err, buffer) {  
     if (err) {
       console.log(err);
     } else {
@@ -29,7 +30,7 @@ var hashFunction = function(username, password, callback) {
       var hash = crypto.createHmac('sha256', salt)
       .update(password)
       .digest('hex');
-      callback(hash, salt, username, function() {});
+      callback(hash, salt, username);
     }
   });
 };
