@@ -451,6 +451,7 @@ describe('', function() {
               var requestWithCookies = httpMocks.createRequest();
               requestWithCookies.cookies.shortlyid = hash;
 
+              //this is broken!!!!!!!!!!f
               sessionParser(requestWithCookies, secondResponse, function() {
                 var session = requestWithCookies.session;
                 expect(requestWithCookies).to.be.an('object');

@@ -34,8 +34,9 @@ app.get('/*',
         return accumulator;
       }, {});
     } else {
-      req.session = {};
-    }
+      //if there is no cookie
+      //call util.initialize
+    } 
     //if no cookies exist, set new cookie on response with id of shortlyid
     //and set to some value (generate some kind of hash with the agent)
     next();
