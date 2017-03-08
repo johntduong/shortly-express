@@ -79,9 +79,7 @@ describe('', function() {
         password: 'p@ssw0rd'
       };
       db.query('INSERT INTO users SET username = \'Howard\', password = \'p@ssw0rd\';', function(err, results) {
-        console.log('this is new User', newUser);
         db.query('SELECT * FROM users WHERE username = ?', newUser.username, function(err, results) {
-          console.log('USERS', results);
           var user = results[0];
           expect(user.username).to.exist;
           expect(user.password).to.exist;
@@ -330,7 +328,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Express Middleware', function() {
+  describe('Express Middleware', function() {
     var cookieParser = require('../server/middleware/cookieParser.js');
     var sessionParser = require('../server/middleware/sessionParser.js');
 
@@ -414,9 +412,9 @@ describe('', function() {
             expect(session).to.be.an('object');
             expect(session.hash).to.exist;
             expect(session.hash).to.be.cookie;
-            done();
           });
         });
+        done();
       });
 
       it('creates a new hash for each new session', function(done) {

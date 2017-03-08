@@ -21,6 +21,26 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from ../public directory
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.get('/*',
+  (req, res, next) => {
+    var cookie = req.get('cookie') || '';
+
+    if (cookie) {
+      req.session = cookie
+      .split(';')
+      .map((e) => { return e.split('='); })
+      .reduce(function(accumulator, curr) {
+        accumulator[curr[0]] = curr[1];
+        return accumulator;
+      }, {});
+    } else {
+      req.session = {};
+    }
+    //if no cookies exist, set new cookie on response with id of shortlyid
+    //and set to some value (generate some kind of hash with the agent)
+    next();
+  });
+
 app.get('/', 
 function(req, res) {
   res.render('index');
@@ -49,41 +69,34 @@ app.get('/signup', function(req, res, next) {
   res.render('signup');
 });
 
-
 //sign up post
 app.post('/signup', function(req, res, next) {
   //we need to read the request body and extract username and password (to hash)
   Users.checkUser(req.body.username, (err, results) => {
     if (results.length > 0) {
       res.redirect('/signup');
-      console.log('duplicate exists!');
     } else {
-      util.hashFunction(req.body.username, req.body.password, Users.addUser);
+      util.saltGenerator(req.body.username, req.body.password, Users.addUser);
       res.redirect('/');
     }
   });
 });
 
-var verifyPassword = (result) => {
-  console.log('this is a found password', result);
-};
-
 app.post('/login', (req, res, next) => {
+  //Check if username exists in db
   Users.checkUser(req.body.username, (err, results) => {
     if (results.length > 0) {
-      //check if password is right
-      //callback2(hash, salt, username, callback1);
-      util.hashFunction(req.body.username, req.body.password, function(hash, salt, username) {
-        Users.getPassword(req.body.password, req.body.username, function(err, results) {
-          if (results[0].password === hash) {
-            console.log(results[0].password);
-            //redirect to the page they would go to if logged in
-            console.log('the password matched!');
-          }
-        });
+      var dbPassword = results[0].password;
+      util.hashFunction(req.body.username, req.body.password, results[0].salt, (hash, salt, username) => {
+        if (hash === dbPassword) {
+          res.redirect('/');
+        } else {
+          res.redirect('/login');
+        }  
       });
     } else {
-      //redirect to signup
+      //redirect to login
+      res.redirect('/login');
     }
   });
 });

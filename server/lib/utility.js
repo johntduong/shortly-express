@@ -20,34 +20,23 @@ exports.isValidUrl = function(url) {
 /************************************************************/
 // Add additional utility functions below
 /************************************************************/
-var hashFunction = function(username, password, callback) {
-  console.log('HASHFUNCTION ARGUMENTS', arguments);
+var saltGenerator = (username, password, callback) => {
   crypto.randomBytes(4, function(err, buffer) {  
     if (err) {
       console.log(err);
     } else {
       var salt = buffer.toString('hex');
-      var hash = crypto.createHmac('sha256', salt)
-      .update(password)
-      .digest('hex');
-      callback(hash, salt, username);
+      exports.hashFunction(username, password, salt, callback);
     }
   });
 };
 
-// var hashFunction = (username, password) => {
-//   // return new Promise((resolve, reject) => {
-//   crypto.randomBytes(4, (err, buffer) => {
-//     var salt = buffer.toString('hex');
-//     var hash = crypto.createHmac('sha256', salt)
-//     .update(password)
-//     .digest('hex');
-    
-//     console.log('hash, salt, username', hash, salt, username);
-//     // resolve(hash, salt, username);
-//     return 'hello';
-//   });  
-//   // });
-// };
+var hashFunction = function(username, password, salt, callback) {
+  var hash = crypto.createHmac('sha256', salt)
+  .update(password)
+  .digest('hex');
+  callback(hash, salt, username);
+};
 
 exports.hashFunction = Promise.promisify(hashFunction, { multiArgs: true });
+exports.saltGenerator = saltGenerator;
